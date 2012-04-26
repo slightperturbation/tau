@@ -76,3 +76,7 @@ If(ODE_FOUND)
     TARGET_LINK_LIBRARIES( testTauOde ${Boost_LIBRARIES} ${PROJECT_NAME} ${ODE_LIBRARY})
 endif(ODE_FOUND)
 
+
+# Build doxygen documentation
+OPTION(SHOULD_BUILD_TAU_DOCUMENTATION "Create doxygen html documentation" ON)
+ADD_SUBDIRECTORY(doc)
