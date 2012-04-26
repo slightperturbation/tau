@@ -12,8 +12,6 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-//#include <cmath>
-//#include <algorithm>
 #include <iostream>
 
 #ifndef TAU_PI
@@ -41,46 +39,50 @@
 ///
 /// \section dependencies Dependicies
 /// The Tau library uses the excellent Eigen linear algebra library 
-/// (see http://eigen.tuxfamily.org/ ).  The boost
-/// unit test libraries are necessary to compile the unit tests.
+/// (see http://eigen.tuxfamily.org/ ). 
+///
+/// The boost unit test libraries are necessary to compile the unit tests.
+///
+/// The ODE bridge requires the Open Dynamics Engine (ODE) physics library (http://www.ode.org/)/
 ///
 /// \section components Components
 /// Tau is made up of three parts: a spatial algebra library (tau.hpp), the
 /// robot definition classes (rigid Body, Joint and SpatialMass) (robot.hpp) 
 /// and the ODE adapters (tauOde.hpp).
 ///
-/// All components are implemented as header-only libraries, so no linking is
-/// required.  All declarations are contained within the namespace "tau", 
-/// except the unit tests, which use the global namespace.  Preprocessor defines
+/// All declarations are contained within the namespace "tau", 
+/// except the unit tests, which use the global namespace. 
+/// 
+/// Preprocessor defines
 /// are used for constant values (pi, pi/2, etc) with the prefix TAU_.
 /// 
 
 /// Catch-all namespace for the tau library.
 namespace tau
 {
-	/// Change this typedef to set the size of scalars.  (Only double has been tested)
+    /// Change this typedef to set the size of scalars.  (Only double has been tested)
     typedef double Scalar;
-	/// 3D Vector
-	typedef Eigen::Matrix< Scalar, 3, 1 > Vector3;
-	/// 6D Vector
-	typedef Eigen::Matrix< Scalar, 6, 1 > Vector6;
+    /// 3D Vector
+    typedef Eigen::Matrix< Scalar, 3, 1 > Vector3;
+    /// 6D Vector
+    typedef Eigen::Matrix< Scalar, 6, 1 > Vector6;
     /// Arbitrary Length Vector
     typedef Eigen::Matrix< Scalar, Eigen::Dynamic, 1 > VectorN;
-	/// 3x3, 9-elem Matrix
-	typedef Eigen::Matrix< Scalar, 3, 3 > Matrix3x3;
-	/// 6x6, 36-elem Matrix
-	typedef Eigen::Matrix< Scalar, 6, 6 > Matrix6x6;
-	/// 6xN variable sized Matrix
+    /// 3x3, 9-elem Matrix
+    typedef Eigen::Matrix< Scalar, 3, 3 > Matrix3x3;
+    /// 6x6, 36-elem Matrix
+    typedef Eigen::Matrix< Scalar, 6, 6 > Matrix6x6;
+    /// 6xN variable sized Matrix
     typedef Eigen::Matrix< Scalar, Eigen::Dynamic, Eigen::Dynamic > MatrixNxN;
-	/// Quaternion
-	typedef Eigen::Quaternion<Scalar>     Quaternion;
-	/// Affine (aka rigid body) transformation
-	typedef Eigen::Transform<Scalar, 3, Eigen::Affine>   AffineTransform;
-	/// Simple translation along a vector.
-	typedef Eigen::Translation<Scalar, 3> Translation;
+    /// Quaternion
+    typedef Eigen::Quaternion<Scalar>     Quaternion;
+    /// Affine (aka rigid body) transformation
+    typedef Eigen::Transform<Scalar, 3, Eigen::Affine>   AffineTransform;
+    /// Simple translation along a vector.
+    typedef Eigen::Translation<Scalar, 3> Translation;
 
     enum { X, Y, Z, W };
-	
+    
     class Point;
     class SpatialVector;
     class SpatialMotionVector;
@@ -89,10 +91,10 @@ namespace tau
     class XForm;
 
     /// Returns the 3x3 identity matrix.
-	Matrix3x3 eye( void );
-	
-	/// Returns the 3x3 matrix of all zeros.
-	Matrix3x3 zero( void );
+    Matrix3x3 eye( void );
+    
+    /// Returns the 3x3 matrix of all zeros.
+    Matrix3x3 zero( void );
     
     /// Returns the 3x3 skew-symmetric matrix derived from vector r.
     Matrix3x3 skewSym( const Vector3& r );
@@ -108,10 +110,10 @@ namespace tau
     /// Returns a 3x3 rotation matrix representing a rotation of \a argRadians
     /// around the y-axis.
     Matrix3x3 rotZ( Scalar argRadians );
-	
-	/// Returns the rotation matrix representing a rotation of angle \a radians
-	/// around the \a axis.  Based on the Rodrigues' rotation formula.
-	Matrix3x3 rotFromAxisAngle( const Vector3& axis, Scalar radians );    
+    
+    /// Returns the rotation matrix representing a rotation of angle \a radians
+    /// around the \a axis.  Based on the Rodrigues' rotation formula.
+    Matrix3x3 rotFromAxisAngle( const Vector3& axis, Scalar radians );    
 
     /// Returns the rotoation matrix representing a rotation that takes
     /// vector \a from to vector \a to.
@@ -130,42 +132,42 @@ namespace tau
     std::ostream& operator<<( std::ostream& out, const SpatialInertia& arg );
 
     /// The vector from aFrom to aTo
-	Vector3 operator-( const Point& aTo, const Point& aFrom );
+    Vector3 operator-( const Point& aTo, const Point& aFrom );
 
     /// Element-wise multiplication by scalar.
-	SpatialMotionVector operator*( Scalar aFactor, const SpatialMotionVector& aVec );
+    SpatialMotionVector operator*( Scalar aFactor, const SpatialMotionVector& aVec );
     
-	/// Element-wise multiplication by scalar.
-	SpatialMotionVector operator*( const SpatialMotionVector& aVec, Scalar aFactor );
+    /// Element-wise multiplication by scalar.
+    SpatialMotionVector operator*( const SpatialMotionVector& aVec, Scalar aFactor );
         
     /// Element-wise multiplication by scalar.
-	SpatialForceVector operator*( Scalar aFactor, const SpatialForceVector& aVec );
-	
-	/// Element-wise multiplication by scalar.
-	SpatialForceVector operator*( const SpatialForceVector& aVec, Scalar aFactor );
-	
+    SpatialForceVector operator*( Scalar aFactor, const SpatialForceVector& aVec );
+    
+    /// Element-wise multiplication by scalar.
+    SpatialForceVector operator*( const SpatialForceVector& aVec, Scalar aFactor );
+    
     /// Stream error reporting method
     std::ostream& errorLog( void );
     
-	/// Represents a 3D point.
-	class Point
-	{
-		friend Vector3 operator -( const Point& aTo, const Point& aFrom );
-	public:
-		Point();
+    /// Represents a 3D point.
+    class Point
+    {
+        friend Vector3 operator -( const Point& aTo, const Point& aFrom );
+    public:
+        Point();
 
-		/// Create point at the given position (x,y,z)
-		Point( Scalar aX, Scalar aY, Scalar aZ );
-		
-		/// Access the elems of the point
-		Scalar operator[]( int aIdx ) const;
-		
-		/// Access and modify the elems of the point
-		Scalar& operator[]( int aIdx );
+        /// Create point at the given position (x,y,z)
+        Point( Scalar aX, Scalar aY, Scalar aZ );
+        
+        /// Access the elems of the point
+        Scalar operator[]( int aIdx ) const;
+        
+        /// Access and modify the elems of the point
+        Scalar& operator[]( int aIdx );
 
-	private:
-		Vector3 data_;
-	};
+    private:
+        Vector3 data_;
+    };
 
     
     /// Abstract super-class handling the behavior of spatialvector
@@ -178,7 +180,7 @@ namespace tau
         {
             data_.setZero();
         }
-		
+        
         /// Build SpatialVector from it's elements, angular first.
         SpatialVector( Scalar a0, 
                        Scalar a1, 
@@ -195,17 +197,17 @@ namespace tau
             data_[5] = a5;
         }
         
-		/// Builds a 6D spatial vector by stacking two 3D vectos.
-		/// Generally, aFirst is the angular component and aSecond is
-		/// the linear component.
+        /// Builds a 6D spatial vector by stacking two 3D vectos.
+        /// Generally, aFirst is the angular component and aSecond is
+        /// the linear component.
         SpatialVector( Vector3 aFirst, Vector3 aSecond )
         {
             data_.head<3>() = aFirst;
             data_.tail<3>() = aSecond;
         }
         
-		/// Build a SpatialVector from the given 6D vector, 
-		/// assumes angular components come first.
+        /// Build a SpatialVector from the given 6D vector, 
+        /// assumes angular components come first.
         SpatialVector( const Vector6& aM )
         : data_( aM )
         {
@@ -227,38 +229,38 @@ namespace tau
             return asVector6();
         }
 
-		/// Sets this vector to all zeros.
-		void setZero()
-		{
-			data_.setZero();
-		}
+        /// Sets this vector to all zeros.
+        void setZero()
+        {
+            data_.setZero();
+        }
         
-		/// Provides direct access to the elems.
-		const Scalar operator[] ( int aIndex ) const
-		{
-			return data_[aIndex];
-		}
-		/// Provides direct access for modification of the elems.
-		Scalar& operator[] ( int aIndex )
-		{
-			return data_[aIndex];
-		}
+        /// Provides direct access to the elems.
+        const Scalar operator[] ( int aIndex ) const
+        {
+            return data_[aIndex];
+        }
+        /// Provides direct access for modification of the elems.
+        Scalar& operator[] ( int aIndex )
+        {
+            return data_[aIndex];
+        }
 
-		/// Returns a copy of the first 3d vector component, generally the rotational component.
+        /// Returns a copy of the first 3d vector component, generally the rotational component.
         Vector3 first( void ) const
         {
             return data_.head<3>();
         }
 
-		/// Returns a copy of the second 3d vector component, generally the translational component.
-		Vector3 second( void ) const
+        /// Returns a copy of the second 3d vector component, generally the translational component.
+        Vector3 second( void ) const
         {
             return data_.tail<3>();
         }
-		
-		/// Returns the cross-product matrix for this spatial vector.
-		/// Overrides provide specific implementation for subclasses.
-		virtual Matrix6x6 skewSym( void ) const = 0;
+        
+        /// Returns the cross-product matrix for this spatial vector.
+        /// Overrides provide specific implementation for subclasses.
+        virtual Matrix6x6 skewSym( void ) const = 0;
         
         /// Copies this spatial vector to the given array, assuming that out has
         /// at least six elements.
@@ -268,23 +270,23 @@ namespace tau
             for( size_t i=0; i<data_.size(); ++i ) *(out+i) = data_[i];
         }
 
-		/// Fills out with the first 3d vector.
-		/// \param out is a pointer to an array with at least three elements.
+        /// Fills out with the first 3d vector.
+        /// \param out is a pointer to an array with at least three elements.
         template< typename ScalarOutT >
         void copyFirstToArray( ScalarOutT* out )
         {
             for( size_t i=0; i<3; ++i ) *(out+i) = data_[i];
         }
         
-		/// Fills out with the second 3d vector.
-		/// \param out is a pointer to an array with at least three elements.
+        /// Fills out with the second 3d vector.
+        /// \param out is a pointer to an array with at least three elements.
         template< typename ScalarOutT >
         void copySecondToArray( ScalarOutT* out )
         {
             for( size_t i=0; i<3; ++i ) *(out+i) = data_[i+3];
         }
 
-		/// Standard output method. 
+        /// Standard output method. 
         friend std::ostream& operator<<( std::ostream& out, const SpatialVector& arg );
     protected:
         virtual ~SpatialVector() {}
@@ -305,7 +307,7 @@ namespace tau
             // Noop
         }
         
-		/// Builds from the provided elements, angular first.
+        /// Builds from the provided elements, angular first.
         SpatialMotionVector( Scalar a0, 
                       Scalar a1, 
                       Scalar a2, 
@@ -317,14 +319,14 @@ namespace tau
             // Noop
         }
         
-		/// Builds from the two 3D vectors, omega as the angular component, vel as the linear.
+        /// Builds from the two 3D vectors, omega as the angular component, vel as the linear.
         SpatialMotionVector( const Vector3& aOmega, const Vector3& aVel )
         : SpatialVector( aOmega, aVel )
         {
             // Noop
         }
         
-		/// Builds from the 6D vector, assuming first three elems are the angular component.
+        /// Builds from the 6D vector, assuming first three elems are the angular component.
         SpatialMotionVector( const Vector6& aM )
         : SpatialVector( aM )
         {
@@ -333,29 +335,29 @@ namespace tau
         
         /// Returns a 6x6 skew-symmetric matrix based on this vector.
         /// This implements the cross-product that is specific to spatial motion vectors.
-		virtual Matrix6x6 skewSym( void ) const
-		{
-			// skewSym(v1:3) , 0
-			// skewSym(v4:6) , skewSym(v1:3)
-			Matrix6x6 out;
-			Matrix3x3 skewOmega = tau::skewSym( first() );
-			Matrix3x3 skewVel   = tau::skewSym( second() );
-			
-			out << skewOmega, Matrix3x3::Zero(),
-			/*  */ skewVel, skewOmega;
-			return out;
-		}
+        virtual Matrix6x6 skewSym( void ) const
+        {
+            // skewSym(v1:3) , 0
+            // skewSym(v4:6) , skewSym(v1:3)
+            Matrix6x6 out;
+            Matrix3x3 skewOmega = tau::skewSym( first() );
+            Matrix3x3 skewVel   = tau::skewSym( second() );
+            
+            out << skewOmega, Matrix3x3::Zero(),
+            /*  */ skewVel, skewOmega;
+            return out;
+        }
         
-		/// Copies the angular (first) 3D vector to out.
-		/// \param out is a pointer to an array with at least three elements.
+        /// Copies the angular (first) 3D vector to out.
+        /// \param out is a pointer to an array with at least three elements.
         template< typename ScalarOutT >
         void copyAngularToArray( ScalarOutT* out )
         {
             copyFirstToArray( out );
         }
 
-		/// Copies the linear (second) 3D vector to out.
-		/// \param out is a pointer to an array with at least three elements.
+        /// Copies the linear (second) 3D vector to out.
+        /// \param out is a pointer to an array with at least three elements.
         template< typename ScalarOutT >
         void copyLinearToArray( ScalarOutT* out )
         {
@@ -369,15 +371,15 @@ namespace tau
         {
             throw "NYI";
         }
-		
-		/// Element-wise multiplication by scalar.
-		friend SpatialMotionVector operator*( Scalar aFactor, const SpatialMotionVector& aVec );
-		/// Element-wise multiplication by scalar.
-		friend SpatialMotionVector operator*( const SpatialMotionVector& aVec, Scalar aFactor );
+        
+        /// Element-wise multiplication by scalar.
+        friend SpatialMotionVector operator*( Scalar aFactor, const SpatialMotionVector& aVec );
+        /// Element-wise multiplication by scalar.
+        friend SpatialMotionVector operator*( const SpatialMotionVector& aVec, Scalar aFactor );
 
     };
-	/// Short alias for SpatialMotionVector.
-	typedef SpatialMotionVector SMV;
+    /// Short alias for SpatialMotionVector.
+    typedef SpatialMotionVector SMV;
     
     SpatialMotionVector operator+( const SpatialMotionVector& a,
                                    const SpatialMotionVector& b );
@@ -386,11 +388,11 @@ namespace tau
     class SpatialForceVector : public SpatialVector
     {
         /// Element-wise multiplication by scalar.
-		friend SpatialForceVector operator*( Scalar aFactor, const SpatialForceVector& aVec );
-		/// Element-wise multiplication by scalar.
-		friend SpatialForceVector operator*( const SpatialForceVector& aVec, Scalar aFactor );
+        friend SpatialForceVector operator*( Scalar aFactor, const SpatialForceVector& aVec );
+        /// Element-wise multiplication by scalar.
+        friend SpatialForceVector operator*( const SpatialForceVector& aVec, Scalar aFactor );
     public:
-		SpatialForceVector() 
+        SpatialForceVector() 
         : SpatialVector() 
         {
             // Noop
@@ -398,43 +400,43 @@ namespace tau
         
         /// Build SpatialVector from it's elements, angular first.
         SpatialForceVector( Scalar a0, 
-							Scalar a1, 
-							Scalar a2, 
-							Scalar a3, 
-							Scalar a4, 
-							Scalar a5 )
+                            Scalar a1, 
+                            Scalar a2, 
+                            Scalar a3, 
+                            Scalar a4, 
+                            Scalar a5 )
         : SpatialVector( a0, a1, a2, a3, a4, a5 )
         {
             // Noop
         }
         
-		/// Builds from the two 3D vectors, aMoment as the angular (torque) component, vel as the linear.
+        /// Builds from the two 3D vectors, aMoment as the angular (torque) component, vel as the linear.
         SpatialForceVector( Vector3 aMoment, Vector3 aForce )
         : SpatialVector( aMoment, aForce )
         {
             // Noop
         }
-		
-		/// Builds from the 6D vector, assuming first three elems are the angular (torque) component.
+        
+        /// Builds from the 6D vector, assuming first three elems are the angular (torque) component.
         SpatialForceVector( const Vector6& aM )
         : SpatialVector( aM )
         {
             // Noop
         }
-		
+        
         /// Returns a 6x6 skew-symmetric matrix based on this vector.
         /// This implements the cross-product that is specific to spatial force vectors.
-		virtual Matrix6x6 skewSym( void ) const
-		{
-			Matrix6x6 out;
-			Matrix3x3 ssft = tau::skewSym( first() ).transpose();
-			out << ssft, tau::skewSym( second() ).transpose(),
-			/*  */ Matrix3x3::Zero(), ssft;
-			return - out;  // note negation
-		}
+        virtual Matrix6x6 skewSym( void ) const
+        {
+            Matrix6x6 out;
+            Matrix3x3 ssft = tau::skewSym( first() ).transpose();
+            out << ssft, tau::skewSym( second() ).transpose(),
+            /*  */ Matrix3x3::Zero(), ssft;
+            return - out;  // note negation
+        }
     };
-	/// Short alias for SpatialForceVector.
-	typedef SpatialForceVector SFV;
+    /// Short alias for SpatialForceVector.
+    typedef SpatialForceVector SFV;
 
     /// Element-wise addition of SpatialForceVector
     SpatialForceVector operator+( const SpatialForceVector& a, const SpatialForceVector& b );
@@ -591,8 +593,8 @@ namespace tau
                                    ltToVector( m_E * tmp * m_E.transpose() ) );
         }
 
- 		/// Returns the result of applying the inverse of this transform to the 
-		/// given vector. 
+        /// Returns the result of applying the inverse of this transform to the 
+        /// given vector. 
         SpatialMotionVector invApply( const SpatialMotionVector& aV )
         {
             return SpatialMotionVector( m_E.transpose() * aV.first(),
@@ -600,8 +602,8 @@ namespace tau
                                         + m_r.cross( m_E.transpose() * aV.first() ) );
         }
         
-		/// Returns the result of applying the inverse of this transform to the 
-		/// given vector. 
+        /// Returns the result of applying the inverse of this transform to the 
+        /// given vector. 
         SpatialForceVector invApply( const SpatialForceVector& aF )
         {
             return SpatialForceVector( m_E.transpose() * aF.first() 
@@ -632,7 +634,7 @@ namespace tau
             return (m_E == that.m_E) && (m_r == that.m_r);
         }
         
-		/// Provides const access to the underlying Eigen matrix.
+        /// Provides const access to the underlying Eigen matrix.
         Matrix6x6 asMatrix6x6() const
         {
             Matrix6x6 out = Matrix6x6::Zero();
